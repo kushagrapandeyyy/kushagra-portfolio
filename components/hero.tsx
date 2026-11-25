@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { HeroCursorTrail } from "@/components/hero-cursor-trail";
 import { engineeringTenure } from "@/lib/data";
 
 export default function Hero() {
@@ -24,6 +25,7 @@ export default function Hero() {
             <i className="signal signal-out" />
           </div>
         </div>
+        <HeroCursorTrail />
         <div className="hero-content">
           <div className="hero-person">
             <p className="hero-name">Kushagra Pandey</p>

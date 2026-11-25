@@ -1,4 +1,5 @@
 import { ArrowUpRight, BrainCircuit, Cloud, PanelsTopLeft, Plus, Server, ShieldCheck } from "lucide-react";
+import { Fragment } from "react";
 import type { ReactNode } from "react";
 import EngineeringVisuals from "@/components/engineering-visuals";
 import Hero from "@/components/hero";
@@ -29,7 +30,7 @@ export default function Home() {
           <SectionHeading id="impact-title" title="Engineering impact">System scale and engineering outcomes across separate engagements.</SectionHeading>
           <dl className="metric-grid">
             {metrics.map(({ value, suffix, context, outcome }) => (
-              <div className="metric" key={context} data-reveal>
+              <div className="metric" key={context}>
                 <dt>
                   <span className="section-kicker">{context}</span>
                   <span className="metric-outcome">{outcome}</span>
@@ -37,7 +38,7 @@ export default function Home() {
                 <dd>
                   <span className="metric-digits" data-count={value}>
                     {value}
-                    <span className="metric-ticker" aria-hidden="true" />
+                    <span className="metric-ticker" data-value="0" aria-hidden="true" />
                   </span>
                   <span className="metric-suffix">{suffix}</span>
                 </dd>
@@ -57,7 +58,7 @@ export default function Home() {
               const Icon = domainIcons[index];
 
               return (
-                <details className="domain-card" name="engineering-domains" open={index === 0} key={domain.title} data-reveal>
+                <details className="domain-card" name="engineering-domains" open={index === 0} key={domain.title} data-reveal="">
                   <summary>
                     <span className="domain-icon" aria-hidden="true"><Icon size={21} strokeWidth={1.6} /></span>
                     <span className="domain-title">{domain.title}</span>
@@ -80,9 +81,17 @@ export default function Home() {
           <SectionHeading id="arsenal-title" title="Technical arsenal" />
           <dl className="arsenal-grid">
             {arsenal.map(item => (
-              <div className="arsenal-item" key={item.label} data-reveal>
+              <div className="arsenal-item" key={item.label} data-reveal="">
                 <dt>{item.label}</dt>
-                <dd>{item.tools}{"note" in item && <small>{item.note}</small>}</dd>
+                <dd>
+                  {item.tools.split(", ").map((tool, index) => (
+                    <Fragment key={tool}>
+                      {index > 0 && ", "}
+                      <span className="arsenal-tag">{tool}</span>
+                    </Fragment>
+                  ))}
+                  {"note" in item && <small>{item.note}</small>}
+                </dd>
               </div>
             ))}
           </dl>
@@ -101,7 +110,7 @@ export default function Home() {
           <div className="experience-grid">
             <ol className="timeline">
               {experience.map(({ start, end, heading, description, result }) => (
-                <li key={start.iso} data-reveal>
+                <li key={start.iso} data-reveal="">
                   <span className="timeline-node" aria-hidden="true" />
                   <p className="section-kicker timeline-date">
                     <time dateTime={start.iso}>{start.label}</time> <span className="sr-only">to</span><span aria-hidden="true">/</span> {end ? <time dateTime={end.iso}>{end.label}</time> : "Present"}
@@ -127,7 +136,7 @@ export default function Home() {
           <SectionHeading id="approach-title" title="Engineering approach">From the first requirements conversation through deployment and iteration.</SectionHeading>
           <ol className="approach-list">
             {approach.map(({ stage, description }, index) => (
-              <li className="approach-stage" key={stage} data-reveal>
+              <li className="approach-stage" key={stage} data-reveal="">
                 <span className="stage-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 <h3>{stage}</h3>
                 <p>{description}</p>

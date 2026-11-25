@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { observeMetricCounts } from "@/components/metric-counts";
 
 const revealDelay = 48;
-const countDuration = 670;
+const revealThreshold = .08;
 
 export function ScrollEffects({ onSectionChange }: { onSectionChange: (id: string) => void }) {
   const progress = useRef<HTMLDivElement>(null);
@@ -17,10 +18,7 @@ export function ScrollEffects({ onSectionChange }: { onSectionChange: (id: strin
     const pointer = hero?.querySelector<HTMLElement>("[data-pointer-light]");
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     const fineMotion = window.matchMedia("(min-width: 881px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
-    const entering = new Set<HTMLElement>();
-    const counters = new Map<HTMLElement, { ticker: HTMLElement; target: number; startsAt: number }>();
     let scrollFrame = 0;
-    let countFrame = 0;
     let pointerFrame = 0;
     let activeSection = "";
     let sectionOffsets: number[] = [];
@@ -85,81 +83,34 @@ export function ScrollEffects({ onSectionChange }: { onSectionChange: (id: strin
       queueScroll();
     }
 
-    function updateCounts(now: number) {
-      countFrame = 0;
-      for (const [digits, { ticker, target, startsAt }] of counters) {
-        if (now < startsAt) continue;
-        const elapsed = Math.min(1, (now - startsAt) / countDuration);
-        const value = Math.round(target * (1 - (1 - elapsed) ** 3));
-        if (ticker.dataset.value !== String(value)) ticker.dataset.value = String(value);
-        if (elapsed === 1) {
-          digits.removeAttribute("data-counting");
-          delete ticker.dataset.value;
-          counters.delete(digits);
-        }
-      }
-      if (counters.size) countFrame = requestAnimationFrame(updateCounts);
-    }
-
-    function startCount(metric: HTMLElement, delay: number) {
-      const digits = metric.querySelector<HTMLElement>("[data-count]");
-      const ticker = digits?.querySelector<HTMLElement>(".metric-ticker");
-      if (!digits || !ticker) return;
-
-      ticker.dataset.value = "0";
-      digits.setAttribute("data-counting", "");
-      counters.set(digits, { ticker, target: Number(digits.dataset.count), startsAt: performance.now() + delay });
-      if (!countFrame) countFrame = requestAnimationFrame(updateCounts);
-    }
-
-    function finishReveal(element: HTMLElement) {
-      entering.delete(element);
-      element.dataset.reveal = "done";
-    }
-
-    function onAnimationComplete(event: AnimationEvent) {
-      const element = event.target;
-      if (!(element instanceof HTMLElement)) return;
-      if (event.animationName === "section-rise" && entering.has(element)) finishReveal(element);
-      if (event.animationName === "run-signal" && element.classList.contains("showcase-flow")) {
-        element.closest("[data-flow]")?.removeAttribute("data-flow");
-      }
-    }
-
     const observer = typeof IntersectionObserver === "function" ? new IntersectionObserver(entries => {
       const groups = new Map<Element | null, number>();
       for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
+        if (!entry.isIntersecting || entry.intersectionRatio < revealThreshold) continue;
         const element = entry.target as HTMLElement;
         observer?.unobserve(element);
-        // Leave content already in view stable on load, deep links and fast jumps.
-        if (reduced.matches || entry.boundingClientRect.top < window.innerHeight - 38) {
-          finishReveal(element);
+        if (element.dataset.reveal) continue;
+        if (reduced.matches) {
+          element.dataset.reveal = "done";
           continue;
         }
 
         const parent = element.parentElement;
         const index = groups.get(parent) ?? 0;
         groups.set(parent, index + 1);
-        const delay = Math.min(index, 3) * revealDelay;
-        element.style.setProperty("--enter-delay", delay + "ms");
-        element.dataset.reveal = "entering";
-        entering.add(element);
-        if (element.classList.contains("metric")) startCount(element, delay);
-        if (element.classList.contains("showcase-item")) element.setAttribute("data-flow", "");
+        element.style.setProperty("--enter-delay", Math.min(index, 4) * revealDelay + "ms");
+        element.dataset.reveal = "played";
       }
-    }, { rootMargin: "0px 0px 56px" }) : null;
+    }, { threshold: revealThreshold }) : null;
 
-    function resetMotion() {
-      for (const element of entering) finishReveal(element);
-      cancelAnimationFrame(countFrame);
-      countFrame = 0;
-      for (const [digits, { ticker }] of counters) {
-        digits.removeAttribute("data-counting");
-        delete ticker.dataset.value;
-      }
-      counters.clear();
-      showcase?.querySelectorAll("[data-flow]").forEach(item => item.removeAttribute("data-flow"));
+    function settleReveals() {
+      if (!reduced.matches) return;
+      document.querySelectorAll<HTMLElement>('[data-reveal="played"]').forEach(element => {
+        element.dataset.reveal = "done";
+      });
+    }
+
+    function clearParallax() {
       hero?.style.removeProperty("--hero-shift");
       hero?.style.removeProperty("--word-shift");
       showcase?.style.removeProperty("--showcase-shift");
@@ -187,39 +138,37 @@ export function ScrollEffects({ onSectionChange }: { onSectionChange: (id: strin
     function syncPointer() {
       hero?.removeEventListener("pointermove", movePointer);
       if (fineMotion.matches) hero?.addEventListener("pointermove", movePointer, { passive: true });
-      else hidePointer();
-      resetMotion();
+      else {
+        hidePointer();
+        clearParallax();
+      }
       queueScroll();
     }
 
-    document.querySelectorAll<HTMLElement>("[data-reveal]").forEach(element => {
-      if (element.dataset.reveal !== "done") observer?.observe(element);
-    });
+    measure();
+    const stopCounts = observeMetricCounts(reduced, headerHeight);
+    document.querySelectorAll<HTMLElement>('[data-reveal=""]').forEach(element => observer?.observe(element));
     const resize = typeof ResizeObserver === "function" ? new ResizeObserver(measure) : null;
     resize?.observe(document.body);
-    document.addEventListener("animationend", onAnimationComplete);
-    document.addEventListener("animationcancel", onAnimationComplete);
     window.addEventListener("scroll", queueScroll, { passive: true });
     window.addEventListener("resize", measure);
-    reduced.addEventListener("change", resetMotion);
+    reduced.addEventListener("change", settleReveals);
     fineMotion.addEventListener("change", syncPointer);
     hero?.addEventListener("pointerleave", hidePointer);
-    measure();
     syncPointer();
 
     return () => {
+      stopCounts?.();
       observer?.disconnect();
       resize?.disconnect();
-      document.removeEventListener("animationend", onAnimationComplete);
-      document.removeEventListener("animationcancel", onAnimationComplete);
       window.removeEventListener("scroll", queueScroll);
       window.removeEventListener("resize", measure);
-      reduced.removeEventListener("change", resetMotion);
+      reduced.removeEventListener("change", settleReveals);
       fineMotion.removeEventListener("change", syncPointer);
       hero?.removeEventListener("pointermove", movePointer);
       hero?.removeEventListener("pointerleave", hidePointer);
       hidePointer();
-      resetMotion();
+      clearParallax();
       cancelAnimationFrame(scrollFrame);
     };
   }, [onSectionChange]);
