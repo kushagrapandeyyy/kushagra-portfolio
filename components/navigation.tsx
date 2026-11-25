@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { ScrollEffects } from "@/components/scroll-effects";
 
@@ -16,13 +16,35 @@ const links = [
 export function Navigation() {
   const [activeSection, setActiveSection] = useState("top");
   const [open, setOpen] = useState(false);
+  const header = useRef<HTMLElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const current = (href: string) => href === "#" + activeSection ? "location" : undefined;
+
+  useEffect(() => {
+    if (!open) return;
+    const desktop = window.matchMedia("(min-width: 881px)");
+
+    function closeOnOutsidePress(event: PointerEvent) {
+      if (event.target instanceof Node && !header.current?.contains(event.target)) setOpen(false);
+    }
+
+    function closeOnDesktop() {
+      if (desktop.matches) setOpen(false);
+    }
+
+    document.addEventListener("pointerdown", closeOnOutsidePress);
+    desktop.addEventListener("change", closeOnDesktop);
+    closeOnDesktop();
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsidePress);
+      desktop.removeEventListener("change", closeOnDesktop);
+    };
+  }, [open]);
 
   return (
     <>
       <ScrollEffects onSectionChange={setActiveSection} />
-      <header className="site-header" onKeyDown={event => {
+      <header className="site-header" ref={header} onKeyDown={event => {
         if (event.key === "Escape" && open) {
           setOpen(false);
           toggle.current?.focus();

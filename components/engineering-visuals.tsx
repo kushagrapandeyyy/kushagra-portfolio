@@ -24,7 +24,7 @@ const visualSystems = [
 
 export default function EngineeringVisuals() {
   return (
-    <section className="showcase section-shell section-space" id="showcase" aria-labelledby="showcase-title">
+    <section className="showcase section-shell section-space" id="showcase" aria-labelledby="showcase-title" tabIndex={-1}>
       <Reveal className="section-heading">
         <h2 id="showcase-title">What I build<span className="accent">.</span></h2>
         <p className="section-aside">Concept illustrations of the systems and patterns I work with.</p>
@@ -35,12 +35,12 @@ export default function EngineeringVisuals() {
             <figure className="showcase-figure">
               <div className="showcase-image">
                 <div className="showcase-media">
-                  <Image src={image} alt="" fill loading="lazy" sizes="(max-width: 535px) 100vw, (max-width: 700px) 48vw, 420px" />
+                  <Image src={image} alt="" fill loading="lazy" sizes="(max-width: 535px) 90vw, (max-width: 700px) 44vw, (max-width: 1420px) 29vw, 415px" />
                 </div>
                 <div className="showcase-flow" aria-hidden="true" />
               </div>
               <figcaption>
-                <p className="section-kicker">{tags}</p>
+                <p className="section-kicker"><span className="glitch-text">{tags}</span></p>
                 <h3>{title}</h3>
                 <p className="showcase-description">{description}</p>
               </figcaption>

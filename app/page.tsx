@@ -4,7 +4,7 @@ import EngineeringVisuals from "@/components/engineering-visuals";
 import Hero from "@/components/hero";
 import { Navigation } from "@/components/navigation";
 import { Reveal } from "@/components/reveal";
-import { approach, arsenal, domains, experience, metrics, relatedExperience } from "@/lib/data";
+import { approach, arsenal, domains, engineeringTenure, experience, metrics, relatedExperience } from "@/lib/data";
 
 const domainIcons = [Server, BrainCircuit, ShieldCheck, Cloud, PanelsTopLeft];
 
@@ -22,11 +22,11 @@ export default function Home() {
     <>
       <a className="skip-link" href="#main-content">Skip to content</a>
       <Navigation />
-      <main id="main-content">
+      <main id="main-content" tabIndex={-1}>
         <Hero />
 
-        <section className="impact section-shell section-space" id="impact" aria-labelledby="impact-title">
-          <SectionHeading id="impact-title" title="Engineering impact">Measured outcomes from separate systems and engagements.</SectionHeading>
+        <section className="impact section-shell section-space" id="impact" aria-labelledby="impact-title" tabIndex={-1}>
+          <SectionHeading id="impact-title" title="Engineering impact">System scale and engineering outcomes across separate engagements.</SectionHeading>
           <dl className="metric-grid">
             {metrics.map(({ value, suffix, context, outcome }) => (
               <div className="metric" key={context} data-reveal>
@@ -35,21 +35,18 @@ export default function Home() {
                   <span className="metric-outcome">{outcome}</span>
                 </dt>
                 <dd>
-                  <span aria-hidden="true">
-                    <span className="metric-digits">
-                      <span className="metric-reserve">{value}</span>
-                      <span data-count={value}>{value}</span>
-                    </span>
-                    <span className="metric-suffix">{suffix}</span>
+                  <span className="metric-digits" data-count={value}>
+                    {value}
+                    <span className="metric-ticker" aria-hidden="true" />
                   </span>
-                  <span className="sr-only">{value}{suffix}</span>
+                  <span className="metric-suffix">{suffix}</span>
                 </dd>
               </div>
             ))}
           </dl>
         </section>
 
-        <section className="domains section-shell section-space" id="domains" aria-labelledby="domains-title">
+        <section className="domains section-shell section-space" id="domains" aria-labelledby="domains-title" tabIndex={-1}>
           <div className="domains-intro">
             <SectionHeading id="domains-title" title="Five engineering domains">
               From the API and data model to the interface, deployment and production diagnostics.
@@ -69,10 +66,9 @@ export default function Home() {
                   <div className="domain-body">
                     <p>{domain.description}</p>
                     <ul className="domain-capabilities">{domain.capabilities.map(capability => <li key={capability}>{capability}</li>)}</ul>
-                    <ul className="domain-technologies" aria-label="Technologies">
-                      {domain.technologies.split(", ").map(technology => <li key={technology}>{technology}</li>)}
+                    <ul className="domain-technologies" aria-label="Highlights">
+                      {domain.highlights.map(highlight => <li key={highlight}>{highlight}</li>)}
                     </ul>
-                    {"familiarity" in domain && <p className="domain-familiarity">{domain.familiarity}</p>}
                   </div>
                 </details>
               );
@@ -80,7 +76,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="arsenal section-shell section-space" id="arsenal" aria-labelledby="arsenal-title">
+        <section className="arsenal section-shell section-space" id="arsenal" aria-labelledby="arsenal-title" tabIndex={-1}>
           <SectionHeading id="arsenal-title" title="Technical arsenal" />
           <dl className="arsenal-grid">
             {arsenal.map(item => (
@@ -94,14 +90,17 @@ export default function Home() {
 
         <EngineeringVisuals />
 
-        <section className="experience section-shell section-space" id="experience" aria-labelledby="experience-title">
+        <section className="experience section-shell section-space" id="experience" aria-labelledby="experience-title" tabIndex={-1}>
           <div className="experience-heading">
-            <SectionHeading id="experience-title" title="Professional experience">Production engineering across backend services, application security, product development and AI.</SectionHeading>
-            <Reveal className="experience-duration"><strong>≈ 2.4</strong><span className="section-kicker">Years of engineering</span></Reveal>
+            <SectionHeading id="experience-title" title="Professional experience">API architecture, backend reliability and application security, alongside product and AI work.</SectionHeading>
+            <Reveal className="experience-duration">
+              <strong>{engineeringTenure}</strong>{" "}
+              <span className="section-kicker">years of professional engineering experience</span>
+            </Reveal>
           </div>
           <div className="experience-grid">
             <ol className="timeline">
-              {experience.map(({ start, end, heading, description }) => (
+              {experience.map(({ start, end, heading, description, result }) => (
                 <li key={start.iso} data-reveal>
                   <span className="timeline-node" aria-hidden="true" />
                   <p className="section-kicker timeline-date">
@@ -109,6 +108,7 @@ export default function Home() {
                   </p>
                   <h3>{heading}</h3>
                   <p>{description}</p>
+                  <p className="timeline-result">{result}</p>
                 </li>
               ))}
             </ol>
@@ -123,7 +123,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="approach section-shell section-space" id="approach" aria-labelledby="approach-title">
+        <section className="approach section-shell section-space" id="approach" aria-labelledby="approach-title" tabIndex={-1}>
           <SectionHeading id="approach-title" title="Engineering approach">From the first requirements conversation through deployment and iteration.</SectionHeading>
           <ol className="approach-list">
             {approach.map(({ stage, description }, index) => (
@@ -136,7 +136,7 @@ export default function Home() {
           </ol>
         </section>
 
-        <section className="contact section-shell section-space" id="contact" aria-labelledby="contact-title">
+        <section className="contact section-shell section-space" id="contact" aria-labelledby="contact-title" tabIndex={-1}>
           <Reveal className="contact-panel">
             <p className="section-kicker">Contact</p>
             <h2 id="contact-title">Let’s bring a complex<br className="contact-break" /> idea into production<span className="accent">.</span></h2>
