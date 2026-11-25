@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
-const trailMotion = "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
+const trailMotion = "(any-hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference)";
 const particleLimit = 40;
-const particleSpacing = 12;
+const particleSpacing = 9;
 const spriteSize = 40;
 
 function makeGlow(sparkle: boolean) {
@@ -16,11 +16,11 @@ function makeGlow(sparkle: boolean) {
 
   const center = spriteSize / 2;
   const glow = context.createRadialGradient(center, center, 0, center, center, center);
-  glow.addColorStop(0, "#e3fbff");
-  glow.addColorStop(.17, "#69d9ff");
-  glow.addColorStop(.36, "#147bff99");
-  glow.addColorStop(.7, "#166eff22");
-  glow.addColorStop(1, "#166eff00");
+  glow.addColorStop(0, "#effdff");
+  glow.addColorStop(.22, "#9beeff");
+  glow.addColorStop(.42, "#32b8fff2");
+  glow.addColorStop(.66, "#1978ff80");
+  glow.addColorStop(1, "#176bff00");
   context.fillStyle = glow;
   context.fillRect(0, 0, spriteSize, spriteSize);
 
@@ -81,9 +81,9 @@ function attachTrail(canvas: HTMLCanvasElement, hero: HTMLElement) {
     particle.driftX = (Math.random() - .5) * 7;
     particle.driftY = (Math.random() - .5) * 7;
     particle.born = now;
-    particle.lifetime = (isSparkle ? 190 : 260) + Math.random() * 85;
-    particle.radius = (isSparkle ? 5 : 3) + Math.random() * 1.7;
-    particle.alpha = isSparkle ? .84 : .68;
+    particle.lifetime = (isSparkle ? 240 : 360) + Math.random() * 100;
+    particle.radius = (isSparkle ? 6.5 : 4.5) + Math.random() * 1.7;
+    particle.alpha = isSparkle ? .94 : .86;
     particle.sprite = isSparkle ? sparkle : glow;
   }
 
@@ -115,10 +115,10 @@ function attachTrail(canvas: HTMLCanvasElement, hero: HTMLElement) {
       if (age >= particle.lifetime) continue;
 
       const progress = Math.max(0, age / particle.lifetime);
-      const radius = particle.radius * (1 - .73 * progress);
+      const radius = particle.radius * (1 - .62 * progress);
       const drawX = particle.x + particle.driftX * progress - radius;
       const drawY = particle.y + particle.driftY * progress - radius;
-      context.globalAlpha = particle.alpha * (1 - progress);
+      context.globalAlpha = particle.alpha * (1 - progress ** 1.6);
       context.drawImage(particle.sprite, drawX, drawY, radius * 2, radius * 2);
       left = Math.min(left, drawX);
       top = Math.min(top, drawY);
@@ -131,7 +131,10 @@ function attachTrail(canvas: HTMLCanvasElement, hero: HTMLElement) {
   }
 
   function move(event: PointerEvent) {
-    if (event.pointerType !== "mouse") return;
+    if (event.pointerType !== "mouse") {
+      clearTrail();
+      return;
+    }
 
     if (!bounds) {
       const rect = canvas.getBoundingClientRect();
@@ -143,13 +146,13 @@ function attachTrail(canvas: HTMLCanvasElement, hero: HTMLElement) {
       bounds = rect;
       x = event.clientX - bounds.left;
       y = event.clientY - bounds.top;
-      emit(x, y, performance.now(), false);
     }
 
     targetX = event.clientX - bounds.left;
     targetY = event.clientY - bounds.top;
     if (!frame) {
       lastFrame = performance.now();
+      emit(x, y, lastFrame, false);
       frame = requestAnimationFrame(draw);
     }
   }
