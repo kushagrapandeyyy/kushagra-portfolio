@@ -1,32 +1,30 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
+const title = "Kushagra Pandey — Software Engineer";
+const description = "Kushagra Pandey builds backend services, intelligent software systems, and full-stack products with a focus on security, performance, and production delivery.";
+const deploymentUrl = process.env.PORTFOLIO_URL;
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://example.com"),
-  title: {
-    default: "Kushagra Pandey — Software Engineer",
-    template: "%s | Kushagra Pandey",
-  },
-  description:
-    "Kushagra Pandey is a software engineer focused on backend systems, full-stack products, application security and applied AI.",
+  ...(deploymentUrl && { metadataBase: new URL(deploymentUrl), alternates: { canonical: "/" } }),
+  title,
+  description,
   openGraph: {
-    title: "Kushagra Pandey — Software Engineer",
-    description:
-      "Building reliable systems, useful products and thoughtful software experiences.",
+    title,
+    description,
     type: "website",
-    images: ["/og-cover.svg"],
+    locale: "en_IN",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kushagra Pandey — Software Engineer",
-    description: "Backend-focused software engineer building products and systems.",
-    images: ["/og-cover.svg"],
+    title,
+    description,
   },
   robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#08090c",
+  themeColor: "#050608",
   colorScheme: "dark",
 };
 
