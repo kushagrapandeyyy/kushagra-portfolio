@@ -647,7 +647,6 @@ button { font: inherit; }
 .showcase-item { min-width: 0; }
 
 .showcase-figure {
-  --flow-color: var(--red-text);
   position: relative;
   height: 100%;
   overflow: hidden;
@@ -658,13 +657,14 @@ button { font: inherit; }
   transition: border-color .24s ease, transform .26s var(--ease-out);
 }
 
-.showcase-item:nth-child(even) .showcase-figure { --flow-color: var(--blue-text); border-color: #263c62; }
+.showcase-item:nth-child(even) .showcase-figure { border-color: #263c62; }
 .showcase-figure:hover { border-color: #496bb0; }
 .showcase-item:nth-child(even) .showcase-figure:hover { border-color: #a85268; }
 
 .showcase-image { position: relative; aspect-ratio: 1.53; overflow: hidden; background: #08090d; }
 .showcase-media { position: absolute; inset: 0; transform: translateY(var(--showcase-shift, 0px)); }
-.showcase-image img { object-fit: cover; transform: scale(1.065); transition: transform .44s var(--ease-out); }
+.showcase-art { position: absolute; inset: 0; transform: scale(1.065); transition: transform .44s var(--ease-out); }
+.showcase-art img { object-fit: cover; }
 .showcase-image::after {
   position: absolute;
   inset: 0;
@@ -674,7 +674,7 @@ button { font: inherit; }
   content: "";
 }
 
-.showcase-item[data-reveal="played"] img { animation: image-settle .52s var(--ease-out) var(--enter-delay, 0ms) backwards; }
+.showcase-item[data-reveal="played"] .showcase-art { animation: image-settle .52s var(--ease-out) var(--enter-delay, 0ms) backwards; }
 
 @keyframes image-settle {
   from { transform: scale(1.105); }
@@ -683,26 +683,53 @@ button { font: inherit; }
 
 .showcase-flow {
   position: absolute;
-  z-index: 1;
-  right: 14%;
-  bottom: 13%;
-  left: 14%;
-  height: 4px;
-  overflow: hidden;
-  color: var(--flow-color);
-  pointer-events: none;
-}
-
-.showcase-flow::after {
-  position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, currentColor 56%, transparent) left center / 26% 1px no-repeat;
-  opacity: 0;
-  content: "";
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  opacity: .78;
+  pointer-events: none;
+  transition: opacity .24s ease;
 }
 
-.showcase-item[data-reveal="played"] .showcase-flow::after {
-  animation: run-signal 1.65s ease-in-out calc(var(--enter-delay, 0ms) + .23s) backwards;
+.showcase-flow[data-flow-active] { visibility: visible; }
+.showcase-flow[data-flow-hovered] { opacity: .98; }
+
+.showcase-packet, .showcase-node-pulse { opacity: 0; }
+
+@supports (offset-path: path("M0 0L1 1")) {
+  .showcase-packet {
+    transform-box: view-box;
+    offset-anchor: 0 0;
+    offset-rotate: auto;
+    animation-name: showcase-packet;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-play-state: paused;
+  }
+}
+
+.showcase-node-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: showcase-node-pulse;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+
+.showcase-flow[data-flow-active] :is(.showcase-packet, .showcase-node-pulse) { animation-play-state: running; }
+
+@keyframes showcase-packet {
+  0% { offset-distance: 0%; opacity: 0; }
+  17%, 70% { opacity: .92; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+@keyframes showcase-node-pulse {
+  0%, 56% { opacity: 0; transform: scale(.76); }
+  74% { opacity: var(--pulse-opacity); }
+  92%, 100% { opacity: 0; transform: scale(1.16); }
 }
 
 .showcase-figure figcaption { padding: 17px clamp(16px, 2vw, 24px) 22px; }
@@ -878,7 +905,7 @@ button { font: inherit; }
   .domain-card summary:is(:hover, :focus-visible) .domain-icon svg { transform: translateY(-1px) scale(1.08); }
   .arsenal-tag:hover { color: var(--blue-text); background-color: #162642; }
   .showcase-figure:hover { transform: translateY(-2px); }
-  .showcase-figure:hover img { transform: scale(1.09); }
+  .showcase-figure:hover .showcase-art { transform: scale(1.09); }
   .button:hover { transform: translateY(-1px); }
   .contact-actions .button:hover { transform: translateY(-2px); }
   .button:active { transform: none; }
@@ -998,4 +1025,5 @@ button { font: inherit; }
   .hero-art { --hero-shift: 0px; }
   .hero-word { transform: none; }
   .showcase-media { transform: none; }
+  .showcase-flow { display: none; }
 }

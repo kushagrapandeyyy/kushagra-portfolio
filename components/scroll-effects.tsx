@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { observeMetricCounts } from "@/components/metric-counts";
+import { observeShowcaseFlow } from "@/components/showcase-flow-motion";
 
 const revealDelay = 48;
 const revealThreshold = .08;
@@ -147,6 +148,7 @@ export function ScrollEffects({ onSectionChange }: { onSectionChange: (id: strin
 
     measure();
     const stopCounts = observeMetricCounts(reduced, headerHeight);
+    const stopFlow = showcase && observeShowcaseFlow(showcase, reduced);
     document.querySelectorAll<HTMLElement>('[data-reveal=""]').forEach(element => observer?.observe(element));
     const resize = typeof ResizeObserver === "function" ? new ResizeObserver(measure) : null;
     resize?.observe(document.body);
@@ -159,6 +161,7 @@ export function ScrollEffects({ onSectionChange }: { onSectionChange: (id: strin
 
     return () => {
       stopCounts?.();
+      stopFlow?.();
       observer?.disconnect();
       resize?.disconnect();
       window.removeEventListener("scroll", queueScroll);
