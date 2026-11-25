@@ -27,7 +27,7 @@ export const domains = [
       "Concurrency and performance optimization",
       "Debugging and production troubleshooting",
     ],
-    highlights: ["Python", "FastAPI", "Django REST Framework"],
+    highlights: ["Python", "FastAPI", "Django REST Framework", "Node.js"],
   },
   {
     title: "AI & Intelligent Systems",
@@ -76,7 +76,7 @@ export const domains = [
 ];
 
 export const arsenal = [
-  { label: "Languages", tools: "Python, JavaScript, TypeScript, SQL", note: "C++ for problem-solving. Familiar with Java." },
+  { label: "Languages", tools: "Python, JavaScript, TypeScript, C++, SQL" },
   { label: "Backend Frameworks", tools: "FastAPI, Django, Django REST Framework, Node.js, Express.js" },
   { label: "APIs & Protocols", tools: "REST, GraphQL, WebSockets" },
   { label: "Data & Search", tools: "Firebase Realtime Database, NoSQL, vector search, semantic search" },
