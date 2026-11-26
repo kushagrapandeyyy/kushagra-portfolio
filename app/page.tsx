@@ -12,7 +12,7 @@ import { githubUrl, linkedinUrl, portfolioName, portfolioUrl } from "@/lib/site"
 const title = `${portfolioName} | Software Engineer & Backend Developer`;
 const description = "Kushagra Pandey is a software engineer and backend developer who builds APIs with Python, FastAPI and Django, and full-stack applications with Node.js and React.";
 const socialImage = {
-  url: portfolioUrl ? new URL("opengraph-image.jpg", portfolioUrl) : "/opengraph-image.jpg",
+  url: new URL("opengraph-image.jpg", portfolioUrl),
   width: 1200,
   height: 630,
   alt: "Kushagra Pandey, software engineer working across backend, AI and systems.",
@@ -21,7 +21,6 @@ const socialImage = {
 export const metadata: Metadata = {
   title,
   description,
-  ...(portfolioUrl && { alternates: { canonical: portfolioUrl } }),
   robots: { index: true, follow: true },
   openGraph: {
     title,
@@ -29,7 +28,6 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     siteName: portfolioName,
-    url: portfolioUrl,
     images: [socialImage],
   },
   twitter: { card: "summary_large_image", title, description, images: [socialImage] },
@@ -40,7 +38,7 @@ const person = {
   "@type": "Person",
   name: portfolioName,
   jobTitle: "Software Engineer",
-  url: portfolioUrl?.href,
+  url: portfolioUrl.href,
   sameAs: [githubUrl, linkedinUrl],
   knowsAbout: ["Python", "FastAPI", "Django", "Node.js", "React", "Backend Development", "API Development", "Software Engineering"],
 };
@@ -59,6 +57,8 @@ function SectionHeading({ id, title, children }: { id: string; title: string; ch
 export default function Home() {
   return (
     <>
+      <link rel="canonical" href={portfolioUrl.href} />
+      <meta property="og:url" content={portfolioUrl.href} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person).replace(/</g, "\\u003c") }} />
       <a className="skip-link" href="#main-content">Skip to content</a>
       <Navigation />
