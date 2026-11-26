@@ -31,7 +31,7 @@ export default function Hero() {
             <p className="hero-name">Kushagra Pandey</p>
             <p className="hero-role">Software Engineer <span>|</span> Backend <span>|</span> AI <span>|</span> Systems</p>
           </div>
-          <h1 className="hero-enter" id="hero-title">5 STACKS.<br /><span className="glitch-text">ONE DEVELOPER.</span></h1>
+          <h1 className="hero-enter" id="hero-title">5 STACKS<br /><span className="glitch-text">ONE DEVELOPER</span></h1>
           <p className="hero-copy">
             I build intelligent systems, engineer scalable backends, strengthen application security and turn complex ideas into production-ready software.
           </p>

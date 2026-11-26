@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Fragment, type CSSProperties } from "react";
+import { type CSSProperties } from "react";
 import { Reveal } from "@/components/reveal";
 
 type Tone = "red" | "blue";
@@ -30,6 +30,8 @@ const visualSystems = [
     tags: "APIs / SERVICES / DATABASES",
     packets: [
       { tone: "red", path: "M210 113 V120 C210 131 218 137 232 137 H421 C435 137 444 146 444 159", duration: 6.4, delay: -1.5 },
+      { tone: "red", path: "M695 113 V120 Q695 137 674 137 H480 Q454 137 454 160", duration: 5.5, delay: -2.4 },
+      { tone: "red", path: "M450 357 V370 Q450 386 425 386 H238 Q213 386 207 406", duration: 6.2, delay: -1.8 },
       { tone: "red", path: "M450 357 V370 C450 381 461 386 478 386 H644 C666 386 675 395 681 406", duration: 7.8, delay: -4 },
     ],
   },
@@ -41,6 +43,7 @@ const visualSystems = [
     tags: "RETRIEVAL / MODELS / TOOLS",
     packets: [
       { tone: "blue", path: "M445 393 L444 308 L443 223", duration: 6.9, delay: -1.8 },
+      { tone: "blue", path: "M444 308 L495 290 L577 293 L652 294", duration: 5.2, delay: -2.8 },
       { tone: "blue", path: "M577 242 C598 238 605 223 611 196 C620 166 633 155 651 157 H667", duration: 5.9, delay: -3.7 },
     ],
     pulses: [
@@ -56,6 +59,7 @@ const visualSystems = [
     tags: "ACCESS / NETWORK / DELIVERY",
     packets: [
       { tone: "blue", path: "M239 477 L263 465 Q269 463 269 457 V445 Q269 438 278 434 L359 399", duration: 7.4, delay: -1.7 },
+      { tone: "red", path: "M574 263 L578 227 L646 202 L728 167", duration: 5.8, delay: -1.9 },
       { tone: "red", path: "M542 389 L663 436", duration: 6.1, delay: -3.4 },
     ],
     pulses: [
@@ -66,23 +70,17 @@ const visualSystems = [
 
 function DataFlow({ id, packets, pulses }: Pick<VisualSystem, "id" | "packets" | "pulses">) {
   const tones = new Set(packets.map(packet => packet.tone));
-  const gradientId = (tone: Tone, part: "glow" | "tail") => `showcase-${id}-${tone}-${part}`;
+  const glowId = (tone: Tone) => `showcase-${id}-${tone}-glow`;
 
   return (
     <svg className="showcase-flow" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
       <defs>
         {[...tones].map(tone => (
-          <Fragment key={tone}>
-            <radialGradient id={gradientId(tone, "glow")}>
-              <stop offset="0%" stopColor={flowColors[tone].light} stopOpacity=".83" />
-              <stop offset="45%" stopColor={flowColors[tone].glow} stopOpacity=".48" />
-              <stop offset="100%" stopColor={flowColors[tone].glow} stopOpacity="0" />
-            </radialGradient>
-            <linearGradient id={gradientId(tone, "tail")} gradientUnits="userSpaceOnUse" x1="-18" x2="0" y1="0" y2="0">
-              <stop offset="0%" stopColor={flowColors[tone].glow} stopOpacity="0" />
-              <stop offset="100%" stopColor={flowColors[tone].light} stopOpacity=".8" />
-            </linearGradient>
-          </Fragment>
+          <radialGradient key={tone} id={glowId(tone)}>
+            <stop offset="0%" stopColor={flowColors[tone].light} stopOpacity=".83" />
+            <stop offset="45%" stopColor={flowColors[tone].glow} stopOpacity=".48" />
+            <stop offset="100%" stopColor={flowColors[tone].glow} stopOpacity="0" />
+          </radialGradient>
         ))}
       </defs>
       {pulses?.map(({ x, y, rx, ry, duration, delay, opacity }) => (
@@ -93,19 +91,19 @@ function DataFlow({ id, packets, pulses }: Pick<VisualSystem, "id" | "packets" |
           cy={y}
           rx={rx}
           ry={ry}
-          fill={`url(#${gradientId("blue", "glow")})`}
+          fill={`url(#${glowId("blue")})`}
           style={{ animationDuration: `${duration}s`, animationDelay: `${delay}s`, "--pulse-opacity": opacity } as CSSProperties}
         />
       ))}
       {packets.map(({ tone, path, duration, delay }) => (
         <g
-          className="showcase-packet"
           key={path}
-          style={{ offsetPath: `path("${path}")`, animationDuration: `${duration}s`, animationDelay: `${delay}s` }}
+          fill="none"
+          strokeLinecap="round"
+          style={{ "--ray-period": `${duration / 2}s`, "--ray-delay": `${delay}s` } as CSSProperties}
         >
-          <circle r="9" fill={`url(#${gradientId(tone, "glow")})`} />
-          <path d="M-18 0H-1" stroke={`url(#${gradientId(tone, "tail")})`} strokeWidth="2.6" strokeLinecap="round" />
-          <circle r="3.3" fill={flowColors[tone].light} />
+          <path className="showcase-packet" d={path} pathLength="100" stroke={flowColors[tone].glow} strokeWidth="9" strokeDasharray="23 77" opacity=".4" />
+          <path className="showcase-packet" d={path} pathLength="100" stroke={flowColors[tone].light} strokeWidth="3" strokeDasharray="16 84" />
         </g>
       ))}
     </svg>
@@ -116,7 +114,7 @@ export default function EngineeringVisuals() {
   return (
     <section className="showcase section-shell section-space" id="showcase" aria-labelledby="showcase-title" tabIndex={-1}>
       <Reveal className="section-heading">
-        <h2 id="showcase-title">What I build<span className="accent">.</span></h2>
+        <h2 id="showcase-title">What I build</h2>
         <p className="section-aside">Concept illustrations of the systems and patterns I work with.</p>
       </Reveal>
       <div className="showcase-grid">

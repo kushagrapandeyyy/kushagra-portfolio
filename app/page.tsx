@@ -12,7 +12,7 @@ const domainIcons = [Server, BrainCircuit, ShieldCheck, Cloud, PanelsTopLeft];
 function SectionHeading({ id, title, children }: { id: string; title: string; children?: ReactNode }) {
   return (
     <Reveal className="section-heading">
-      <h2 id={id}>{title}<span className="accent">.</span></h2>
+      <h2 id={id}>{title}</h2>
       {children && <p className="section-aside">{children}</p>}
     </Reveal>
   );
@@ -148,7 +148,7 @@ export default function Home() {
         <section className="contact section-shell section-space" id="contact" aria-labelledby="contact-title" tabIndex={-1}>
           <Reveal className="contact-panel">
             <p className="section-kicker">Contact</p>
-            <h2 id="contact-title">Let’s bring a complex<br className="contact-break" /> idea into production<span className="accent">.</span></h2>
+            <h2 id="contact-title">Let’s bring a complex<br className="contact-break" /> idea into production</h2>
             <div className="contact-actions">
               <a className="button button-primary" href="mailto:kushagrapandeycodes@gmail.com">
                 Email me <ArrowUpRight className="button-arrow diagonal" size={16} aria-hidden="true" />

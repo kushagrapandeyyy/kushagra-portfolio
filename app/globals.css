@@ -695,18 +695,8 @@ button { font: inherit; }
 .showcase-flow[data-flow-active] { visibility: visible; }
 .showcase-flow[data-flow-hovered] { opacity: .98; }
 
-.showcase-packet, .showcase-node-pulse { opacity: 0; }
-
-@supports (offset-path: path("M0 0L1 1")) {
-  .showcase-packet {
-    transform-box: view-box;
-    offset-anchor: 0 0;
-    offset-rotate: auto;
-    animation-name: showcase-packet;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-play-state: paused;
-  }
+.showcase-packet {
+  animation: showcase-packet var(--ray-period) linear var(--ray-delay) infinite paused;
 }
 
 .showcase-node-pulse {
@@ -721,9 +711,8 @@ button { font: inherit; }
 .showcase-flow[data-flow-active] :is(.showcase-packet, .showcase-node-pulse) { animation-play-state: running; }
 
 @keyframes showcase-packet {
-  0% { offset-distance: 0%; opacity: 0; }
-  17%, 70% { opacity: .92; }
-  100% { offset-distance: 100%; opacity: 0; }
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -100; }
 }
 
 @keyframes showcase-node-pulse {
