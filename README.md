@@ -11,7 +11,7 @@ npm run dev
 
 Open http://localhost:3000. Run `npm run build` to verify the production build.
 
-For a custom deployment, set the optional `PORTFOLIO_URL` environment variable to the public site origin to set the canonical URL and social metadata base.
+Set `PORTFOLIO_URL` at build time to the primary public origin (for example, `https://example.com`). On Vercel, the build falls back to `VERCEL_PROJECT_PRODUCTION_URL` when no explicit origin is set. The canonical URL, social metadata, structured data and sitemap use the same origin. Local builds without a configured origin omit the canonical URL and sitemap.
 
 ## Edit content
 

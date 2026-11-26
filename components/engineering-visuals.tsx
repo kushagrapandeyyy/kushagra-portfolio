@@ -9,6 +9,7 @@ type VisualSystem = {
   id: string;
   title: string;
   image: string;
+  alt: string;
   description: string;
   tags: string;
   packets: Packet[];
@@ -26,6 +27,7 @@ const visualSystems = [
     id: "backend",
     title: "Backend Architecture",
     image: "/systems-backend.webp",
+    alt: "Red connections link a central server rack to services above and databases below.",
     description: "API communication, layered services and distributed data flows connecting applications to storage.",
     tags: "APIs / SERVICES / DATABASES",
     packets: [
@@ -39,6 +41,7 @@ const visualSystems = [
     id: "ai",
     title: "AI Engineering",
     image: "/systems-network.webp",
+    alt: "A blue mesh branches out to stacked data layers, connected nodes and tools.",
     description: "Vector retrieval, LLM orchestration and connected agents and tools that support intelligent workflows.",
     tags: "RETRIEVAL / MODELS / TOOLS",
     packets: [
@@ -55,6 +58,7 @@ const visualSystems = [
     id: "security",
     title: "Security & Infrastructure",
     image: "/systems-security.webp",
+    alt: "A blue shield sits at the center of a network of servers and devices.",
     description: "Encrypted connections, authentication layers, infrastructure monitoring and deployment pipelines.",
     tags: "ACCESS / NETWORK / DELIVERY",
     packets: [
@@ -127,14 +131,14 @@ export default function EngineeringVisuals() {
 }
 
 function ShowcaseCard({ system }: { system: VisualSystem }) {
-  const { title, image, description, tags } = system;
+  const { title, image, alt, description, tags } = system;
   return (
     <Reveal className="showcase-item">
       <figure className="showcase-figure">
         <div className="showcase-image">
           <div className="showcase-media">
             <div className="showcase-art">
-              <Image src={image} alt="" fill loading="lazy" sizes="(max-width: 535px) 90vw, (max-width: 700px) 44vw, (max-width: 1420px) 29vw, 415px" />
+              <Image src={image} alt={alt} fill loading="lazy" sizes="(max-width: 535px) 90vw, (max-width: 700px) 44vw, (max-width: 1420px) 29vw, 415px" />
               <DataFlow id={system.id} packets={system.packets} pulses={system.pulses} />
             </div>
           </div>

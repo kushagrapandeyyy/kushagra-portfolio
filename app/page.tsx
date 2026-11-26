@@ -1,4 +1,5 @@
 import { ArrowUpRight, BrainCircuit, Cloud, PanelsTopLeft, Plus, Server, ShieldCheck } from "lucide-react";
+import type { Metadata } from "next";
 import { Fragment } from "react";
 import type { ReactNode } from "react";
 import EngineeringVisuals from "@/components/engineering-visuals";
@@ -6,6 +7,43 @@ import Hero from "@/components/hero";
 import { Navigation } from "@/components/navigation";
 import { Reveal } from "@/components/reveal";
 import { approach, arsenal, domains, engineeringTenure, experience, metrics, relatedExperience } from "@/lib/data";
+import { githubUrl, linkedinUrl, portfolioName, portfolioUrl } from "@/lib/site";
+
+const title = `${portfolioName} | Software Engineer & Backend Developer`;
+const description = "Kushagra Pandey is a software engineer and backend developer who builds APIs with Python, FastAPI and Django, and full-stack applications with Node.js and React.";
+const socialImage = {
+  url: portfolioUrl ? new URL("opengraph-image.jpg", portfolioUrl) : "/opengraph-image.jpg",
+  width: 1200,
+  height: 630,
+  alt: "Kushagra Pandey, software engineer working across backend, AI and systems.",
+};
+
+export const metadata: Metadata = {
+  title,
+  description,
+  ...(portfolioUrl && { alternates: { canonical: portfolioUrl } }),
+  robots: { index: true, follow: true },
+  openGraph: {
+    title,
+    description,
+    type: "website",
+    locale: "en_IN",
+    siteName: portfolioName,
+    url: portfolioUrl,
+    images: [socialImage],
+  },
+  twitter: { card: "summary_large_image", title, description, images: [socialImage] },
+};
+
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: portfolioName,
+  jobTitle: "Software Engineer",
+  url: portfolioUrl?.href,
+  sameAs: [githubUrl, linkedinUrl],
+  knowsAbout: ["Python", "FastAPI", "Django", "Node.js", "React", "Backend Development", "API Development", "Software Engineering"],
+};
 
 const domainIcons = [Server, BrainCircuit, ShieldCheck, Cloud, PanelsTopLeft];
 
@@ -21,6 +59,7 @@ function SectionHeading({ id, title, children }: { id: string; title: string; ch
 export default function Home() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person).replace(/</g, "\\u003c") }} />
       <a className="skip-link" href="#main-content">Skip to content</a>
       <Navigation />
       <main id="main-content" tabIndex={-1}>
@@ -153,7 +192,7 @@ export default function Home() {
               <a className="button button-primary" href="mailto:kushagrapandeycodes@gmail.com">
                 Email me <ArrowUpRight className="button-arrow diagonal" size={16} aria-hidden="true" />
               </a>
-              <a className="button button-quiet" href="https://www.linkedin.com/in/kushagra-pandey-66421424a/" target="_blank" rel="noreferrer">
+              <a className="button button-quiet" href={linkedinUrl} target="_blank" rel="noreferrer">
                 LinkedIn <ArrowUpRight className="button-arrow diagonal" size={16} aria-hidden="true" />
               </a>
             </div>
